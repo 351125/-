@@ -12,7 +12,6 @@
     	$password = 'パスワード';
     	$pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
     	
-
     	//テーブルを作成
         //登録項目（カラム）は6つ
         //作成時刻、更新時刻は自動で記録。
@@ -26,7 +25,7 @@
     	);";
     	$stmt = $pdo->query($sql);
     
-        
+	
     //編集機能第一段階
     if(!empty($_POST['edit'])){//編集番号を受信
         if(!empty($_POST['epass'])){//パスワードを受信
