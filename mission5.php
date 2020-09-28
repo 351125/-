@@ -58,7 +58,7 @@
         comment:<input type="text" name="comment"><br>
         password:<input type="text" name="pass"><br>
         <input type="hidden" name="enumber" 
-        value="<?php if($num!=null){echo $num;}else{echo "";}?>">
+        value="<?php if(isset($num)){echo $num;}?>">
         <input type="submit" value="送信"><br><br>
 
         delete:<input type="number" name="delete" placeholder="削除希望の投稿番号を入力"><br>
@@ -73,43 +73,43 @@
     
 	<?php		
         //書き込み（新規投稿モード）
-        if(empty($_POST['enumber'])){//編集番号を投稿フォームから受信しなかったとき。
             if(!empty($_POST['name']) && !empty($_POST['comment'])){//名前とコメントを受信
-                if(!empty($_POST['pass'])){//パスワードを受信
-                    $sql = $pdo -> prepare('INSERT INTO 501a (name,comment,password)
-                    VALUES (:name,:comment,:password)');
-                    $sql -> bindParam(':name', $name, PDO::PARAM_STR);
-                    //１個目で :name のようにさっき与えたパラメータを指定。
-                    //２個目に、それに入れる変数を指定。bindParam には直接数値を入れられない。変数のみ。
-                    //３個目で型を指定。PDO::PARAM_STR は「文字列だよ」って事。
-                    $sql -> bindParam(':comment', $comment, PDO::PARAM_STR);
-                    $sql -> bindParam(':password',$password,PDO::PARAM_STR);
-                    $name = $_POST['name'];
-                    $comment = $_POST['comment']; 
-                    $password = $_POST['pass'];
-                    $sql -> execute();
-                    //execute は、命令などを「実行する」「遂行する」って意味。
-                    //query はそのまま実行しちゃう。prepare は後で execute が必要。
-                    //prepare文内パラメータは(:name, :value) のように「'」はいらない。
-                    //bindParamなどでパラメータを指定する時は(':name', $name) のように「':name'」とする。
-                    //bindParamの引数名（:name など）はテーブルのカラム名に併せるとミスが少なくなる。
-                    echo "投稿を追加しました。".'<br>';
-                    echo "<hr>";
-                }else{echo "パスワードを入力してください。<br>";}    
-            }
+                if(empty($_POST['enumber'])){//編集番号を投稿フォームから受信しなかったとき。
+                    if(!empty($_POST['pass'])){//パスワードを受信
+                        $sql = $pdo -> prepare('INSERT INTO 501a (name,comment,password)
+                        VALUES (:name,:comment,:password)');
+                        $sql -> bindParam(':name', $name, PDO::PARAM_STR);
+                        //１個目で :name のようにさっき与えたパラメータを指定。
+                        //２個目に、それに入れる変数を指定。bindParam には直接数値を入れられない。変数のみ。
+                        //３個目で型を指定。PDO::PARAM_STR は「文字列だよ」って事。
+                        $sql -> bindParam(':comment', $comment, PDO::PARAM_STR);
+                        $sql -> bindParam(':password',$password,PDO::PARAM_STR);
+                        $name = $_POST['name'];
+                        $comment = $_POST['comment']; 
+                        $password = $_POST['pass'];
+                        $sql -> execute();
+                        //execute は、命令などを「実行する」「遂行する」って意味。
+                        //query はそのまま実行しちゃう。prepare は後で execute が必要。
+                        //prepare文内パラメータは(:name, :value) のように「'」はいらない。
+                        //bindParamなどでパラメータを指定する時は(':name', $name) のように「':name'」とする。
+                        //bindParamの引数名（:name など）はテーブルのカラム名に併せるとミスが少なくなる。
+                        echo "投稿を追加しました。".'<br>';
+                        echo "<hr>";
+                    }else{echo "パスワードを入力してください。<br>";echo "<hr>";}    
         //書き込み（編集機能）
-        }else{//編集番号を投稿フォームから受信した時。
-                $enumber=$_POST['enumber'];//隠されたフォームから受信した編集番号
-                $id = $enumber; //編集する投稿番号
-                $name = $_POST['name'];//新たに受信した名前
-                $comment = $_POST['comment']; //新たに受信した内容
-                $sql = 'UPDATE 501a SET name=:name,comment=:comment WHERE id=:id limit 1';
-                $stmt = $pdo->prepare($sql);
-                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-                $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-                $stmt->execute();
-        }
+                }else{//編集番号を投稿フォームから受信した時。
+                        $enumber=$_POST['enumber'];//隠されたフォームから受信した編集番号
+                        $id = $enumber; //編集する投稿番号
+                        $name = $_POST['name'];//新たに受信した名前
+                        $comment = $_POST['comment']; //新たに受信した内容
+                        $sql = 'UPDATE 501a SET name=:name,comment=:comment WHERE id=:id limit 1';
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                        $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+                        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                        $stmt->execute();
+                }
+            }
     	
         
         //削除機能
